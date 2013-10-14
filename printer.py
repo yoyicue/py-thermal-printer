@@ -100,8 +100,8 @@ class ThermalPrinter(object):
 
     def underline_on(self):
         self.printer.write(self._ESC)
-        self.printer.write(chr(45))
-        self.printer.write(chr(1))
+        self.printer.write(chr(33))
+        self.printer.write(chr(128)) # Light: 128 Dark: 136
 
     def inverse_off(self):
         self.printer.write(chr(29))
