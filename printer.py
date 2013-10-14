@@ -157,7 +157,13 @@ class ThermalPrinter(object):
             for i in xrange(chars_per_line + 1, le, chars_per_line + 1):
                 l.insert(i, '\n')
             self.printer.write("".join(l))
-            print "".join(l)         
+            print "".join(l)
+
+    def print_bold(self, msg):
+        self.bold_on()
+        self.print_text(msg)
+        self.bold_off()
+
 
 
 
@@ -176,9 +182,7 @@ if __name__ == '__main__':
     p = ThermalPrinter(serialport=serialport)
     p.print_text("\n美团餐厅树莓派打印机\n")
     p.print_text("我要 ")
-    p.bold_on()
-    p.print_text("加粗\n")
-    p.bold_off()
+    p.print_bold("加粗\n")
     p.print_text("我也要")
     p.font_b_on()
     p.print_text("变大\n")
