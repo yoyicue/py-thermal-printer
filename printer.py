@@ -48,7 +48,7 @@ class ThermalPrinter(object):
     # this might work better on a Raspberry Pi
     SERIALPORT = '/dev/ttyAMA0'
 
-    BAUDRATE = 19200
+    BAUDRATE = 9600
     TIMEOUT = 3
 
     # pixels with more color value (average for multiple channels) are counted as white
