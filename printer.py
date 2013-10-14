@@ -75,13 +75,13 @@ class ThermalPrinter(object):
 
     def bold_off(self):
         self.printer.write(self._ESC)
-        self.printer.write(chr(69))
+        self.printer.write(chr(33))
         self.printer.write(chr(0))
 
     def bold_on(self):
         self.printer.write(self._ESC)
-        self.printer.write(chr(69))
-        self.printer.write(chr(1))
+        self.printer.write(chr(33))
+        self.printer.write(chr(8))
 
     def font_b_off(self):
         self.printer.write(self._ESC)
