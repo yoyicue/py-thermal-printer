@@ -1,5 +1,5 @@
 #!/usr/bin/env python 
-#coding=gbk
+#coding=utf-8
 
 import serial, time
 
@@ -209,7 +209,8 @@ class ThermalPrinter(object):
     def print_text(self, msg, chars_per_line=None):
         """ Print some text defined by msg. If chars_per_line is defined, 
             inserts newlines after the given amount. Use normal '\n' line breaks for 
-            empty lines. """ 
+            empty lines. """
+        msg = msg.decode('utf-8').encode('gbk')
         if chars_per_line == None:
             self.printer.write(msg)
         else:
