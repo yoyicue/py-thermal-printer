@@ -257,6 +257,7 @@ if __name__ == '__main__':
     p.justify("C")
     p.barcode_chr("2")
     p.barcode("014633098808")
+    p.print_text("测试\n")
     p.linefeed()
     p.linefeed()
     p.linefeed()
