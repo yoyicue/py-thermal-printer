@@ -164,6 +164,10 @@ class ThermalPrinter(object):
         self.print_text(msg)
         self.bold_off()
 
+    def print_b(self, msg):
+        p.font_b_on()
+        self.print_text(msg)
+        p.font_b_off()
 
 
 
@@ -184,9 +188,7 @@ if __name__ == '__main__':
     p.print_text("我要 ")
     p.print_bold("加粗\n")
     p.print_text("我也要")
-    p.font_b_on()
-    p.print_text("变大\n")
-    p.font_b_off()
+    p.print_b("变大\n")
     p.justify("R")
     p.print_text("靠右\n")
     p.justify("C")
