@@ -104,24 +104,14 @@ class ThermalPrinter(object):
         self.printer.write(chr(128)) # Light: 128 Dark: 136
 
     def inverse_off(self):
-        self.printer.write(chr(29))
-        self.printer.write(chr(66))
+        self.printer.write(self._ESC)
+        self.printer.write(chr(33))
         self.printer.write(chr(0))
 
     def inverse_on(self):
-        self.printer.write(chr(29))
-        self.printer.write(chr(66))
-        self.printer.write(chr(1))
-
-    def upsidedown_off(self):
         self.printer.write(self._ESC)
-        self.printer.write(chr(123))
-        self.printer.write(chr(0))
-
-    def upsidedown_on(self):
-        self.printer.write(self._ESC)
-        self.printer.write(chr(123))
-        self.printer.write(chr(1))
+        self.printer.write(chr(33))
+        self.printer.write(chr(64))
         
     def barcode_chr(self, msg):
         self.printer.write(chr(29)) # Leave
