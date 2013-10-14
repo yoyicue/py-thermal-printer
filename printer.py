@@ -174,6 +174,11 @@ class ThermalPrinter(object):
         self.print_text(msg)
         p.underline_off()
 
+    def print_inverse(self, msg):
+        p.inverse_on()
+        self.print_text(msg)
+        p.inverse_off()    
+
 if __name__ == '__main__':
     import sys, os
 
@@ -194,6 +199,8 @@ if __name__ == '__main__':
     p.print_b("变大\n")
     p.print_text("我还要")
     p.print_underline("下划线\n")
+    p.print_text("最后是")
+    p.print_inverse("反白\n")
     p.justify("R")
     p.print_text("靠右\n")
     p.justify("C")
