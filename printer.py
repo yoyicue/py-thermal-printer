@@ -184,7 +184,7 @@ if __name__ == '__main__':
 
     print "Testing printer on port %s" % serialport
     p = ThermalPrinter(serialport=serialport)
-    p.print_text("\nHello maailma. How's it going?\n")
+    p.print_text("\n美团餐厅树莓派打印机\n")
     p.print_text("Part of this ")
     p.bold_on()
     p.print_text("line is bold\n")
@@ -206,7 +206,6 @@ if __name__ == '__main__':
     p.justify("C")
     p.barcode_chr("2")
     p.barcode("014633098808")
-    p.print_text("测试\n")
     p.linefeed()
     p.linefeed()
     p.linefeed()
