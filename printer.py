@@ -51,12 +51,6 @@ class ThermalPrinter(object):
     BAUDRATE = 9600
     TIMEOUT = 3
 
-    # pixels with more color value (average for multiple channels) are counted as white
-    # tweak this if your images appear too black or too white
-    black_threshold = 48
-    # pixels with less alpha than this are counted as white
-    alpha_threshold = 127
-
     printer = None
 
     _ESC = chr(27)
