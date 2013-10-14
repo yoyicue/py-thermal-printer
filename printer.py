@@ -91,11 +91,11 @@ class ThermalPrinter(object):
     def font_b_on(self):
         self.printer.write(self._ESC)
         self.printer.write(chr(33))
-        self.printer.write(chr(1))
+        self.printer.write(chr(48))
 
     def underline_off(self):
         self.printer.write(self._ESC)
-        self.printer.write(chr(45))
+        self.printer.write(chr(33))
         self.printer.write(chr(0))
 
     def underline_on(self):
