@@ -22,55 +22,37 @@ class ThermalPrinter(object):
 
     BAUDRATE = 9600
     TIMEOUT = 3
-
     printer = None
-
     _ESC = chr(27)
-
-    # These values (including printDensity and printBreaktime) are taken from 
-    # lazyatom's Adafruit-Thermal-Library branch and seem to work nicely with bitmap 
-    # images. Changes here can cause symptoms like images printing out as random text. 
-    # Play freely, but remember the working values.
-    # https://github.com/adafruit/Adafruit-Thermal-Printer-Library/blob/0cc508a9566240e5e5bac0fa28714722875cae69/Thermal.cpp
     
-    # Set "max heating dots", "heating time", "heating interval"
-    # n1 = 0-255 Max printing dots, Unit (8dots), Default: 7 (64 dots)
-    # n2 = 3-255 Heating time, Unit (10us), Default: 80 (800us)
-    # n3 = 0-255 Heating interval, Unit (10us), Default: 2 (20us)
-    # The more max heating dots, the more peak current will cost
-    # when printing, the faster printing speed. The max heating
-    # dots is 8*(n1+1). The more heating time, the more density,
-    # but the slower printing speed. If heating time is too short,
-    # blank page may occur. The more heating interval, the more
-    # clear, but the slower printing speed.
-    
-    def __init__(self, heatTime=80, heatInterval=2, heatingDots=7, serialport=SERIALPORT):
+    def __init__(self, speed=2, grayscale=7, font=0, serialport=SERIALPORT):
         self.printer = serial.Serial(serialport, self.BAUDRATE, timeout=self.TIMEOUT)
         self.printer.write(self._ESC) # ESC - command
         self.printer.write(chr(64)) # @   - initialize
-        self.printer.write(self._ESC) # ESC - command
-        self.printer.write(chr(55)) # 7   - print settings
-        self.printer.write(chr(heatingDots))  # Heating dots (20=balance of darkness vs no jams) default = 20
-        self.printer.write(chr(heatTime)) # heatTime Library default = 255 (max)
-        self.printer.write(chr(heatInterval)) # Heat interval (500 uS = slower, but darker) default = 250
 
-        #setting test
-        self.printer.write(chr(28)) # FS
-        self.printer.write(chr(38)) # &
+        #Speed
+        self.printer.write(self._ESC) # ESC - command
+        self.printer.write(chr(115))
+        self.printer.write(chr(speed))  # Low:0 Medium:1 High:2
+
+        #Grayscale
+        self.printer.write(self._ESC) # ESC - command
+        self.printer.write(chr(109))
+        self.printer.write(chr(grayscale))  # Light-Dark:1-8
+
+        #Font
+        self.printer.write(self._ESC) # ESC - command
+        self.printer.write(chr(77))
+        self.printer.write(chr(font))  # 0:24X24 1:16X16 2:12X12
+
+        #Chinese Mode
+        self.printer.write(chr(28)) # FS - Chinese mode
+        self.printer.write(chr(38)) # & - Enable
+
+        #Character
         self.printer.write(self._ESC) # ESC - command
         self.printer.write(chr(82)) # R
-        self.printer.write(chr(15)) # chinese
-
-        # Description of print density from page 23 of the manual:
-        # DC2 # n Set printing density
-        # Decimal: 18 35 n
-        # D4..D0 of n is used to set the printing density. Density is 50% + 5% * n(D4-D0) printing density.
-        # D7..D5 of n is used to set the printing break time. Break time is n(D7-D5)*250us.
-        printDensity = 15 # 120% (? can go higher, text is darker but fuzzy)
-        printBreakTime = 15 # 500 uS
-        self.printer.write(chr(18))
-        self.printer.write(chr(35))
-        self.printer.write(chr((printDensity << 4) | printBreakTime))
+        self.printer.write(chr(15)) # Chinese Character
 
     def reset(self):
         self.printer.write(self._ESC)
