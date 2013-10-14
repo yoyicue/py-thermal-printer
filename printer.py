@@ -169,7 +169,10 @@ class ThermalPrinter(object):
         self.print_text(msg)
         p.font_b_off()
 
-
+    def print_underline(self, msg):
+        p.underline_on()
+        self.print_text(msg)
+        p.underline_off()
 
 if __name__ == '__main__':
     import sys, os
@@ -189,6 +192,8 @@ if __name__ == '__main__':
     p.print_bold("加粗\n")
     p.print_text("我也要")
     p.print_b("变大\n")
+    p.print_text("我还要")
+    p.print_underline("下划线\n")
     p.justify("R")
     p.print_text("靠右\n")
     p.justify("C")
