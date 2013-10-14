@@ -11,40 +11,12 @@ import serial, time
 # - Fix user permissions with "sudo usermod -a -G dialout pi"
 # - Reboot
 # - Ensure that the SERIALPORT setting is correct below
-#
-# BEAGLE BONE: 
-# Mux settings (Ängström 2012.05, also work on ubuntu 12.04):
-# echo 1 > /sys/kernel/debug/omap_mux/spi0_sclk
-# echo 1 > /sys/kernel/debug/omap_mux/spi0_d0 
 #===========================================================#
 
     
 class ThermalPrinter(object):
-    """ 
-        
-        Thermal printing library that controls the "micro panel thermal printer" sold in
-        shops like Adafruit and Sparkfun (e.g. http://www.adafruit.com/products/597). 
-        Mostly ported from Ladyada's Arduino library 
-        (https://github.com/adafruit/Adafruit-Thermal-Printer-Library) to run on
-        BeagleBone and Raspberry Pi.
 
-        Currently handles printing image data and text, but the rest of the
-        built-in functionality like underlining and barcodes are trivial
-        to port to Python when needed.
 
-        If on BeagleBone or similar device, remember to set the mux settings
-        or change the UART you are using. See the beginning of this file for
-        default setup.
-
-        Thanks to Matt Richardson for the initial pointers on controlling the
-        device via Python.
-
-        @author: Lauri Kainulainen 
-
-    """
-
-    # default serial port for the Beagle Bone
-    #SERIALPORT = '/dev/ttyO2'
     # this might work better on a Raspberry Pi
     SERIALPORT = '/dev/ttyAMA0'
 
