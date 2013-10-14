@@ -25,7 +25,7 @@ class ThermalPrinter(object):
     printer = None
     _ESC = chr(27)
     
-    def __init__(self, speed=2, grayscale=7, font=0, serialport=SERIALPORT):
+    def __init__(self, speed=2, grayscale=2, font=0, serialport=SERIALPORT):
         self.printer = serial.Serial(serialport, self.BAUDRATE, timeout=self.TIMEOUT)
         self.printer.write(self._ESC) # ESC - command
         self.printer.write(chr(64)) # @   - initialize
