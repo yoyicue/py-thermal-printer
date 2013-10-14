@@ -22,6 +22,11 @@ class ThermalPrinter(object):
 
     BAUDRATE = 9600
     TIMEOUT = 3
+
+    #test
+    black_threshold = 48
+    alpha_threshold = 127
+
     printer = None
     _ESC = chr(27)
     
@@ -177,7 +182,111 @@ class ThermalPrinter(object):
     def print_inverse(self, msg):
         p.inverse_on()
         self.print_text(msg)
-        p.inverse_off()    
+        p.inverse_off()
+
+    def convert_pixel_array_to_binary(self, pixels, w, h):
+        """ Convert the pixel array into a black and white plain list of 1's and 0's
+            width is enforced to 384 and padded with white if needed. """
+        black_and_white_pixels = [1] * 384 * h
+        if w > 384:
+            print "Bitmap width too large: %s. Needs to be under 384" % w
+            return False
+        elif w < 384:
+            print "Bitmap under 384 (%s), padding the rest with white" % w
+
+        print "Bitmap size", w
+
+        if type(pixels[0]) == int: # single channel
+            print " => single channel"
+            for i, p in enumerate(pixels):
+                if p < self.black_threshold:
+                    black_and_white_pixels[i % w + i / w * 384] = 0
+                else:
+                    black_and_white_pixels[i % w + i / w * 384] = 1
+        elif type(pixels[0]) in (list, tuple) and len(pixels[0]) == 3: # RGB
+            print " => RGB channel"
+            for i, p in enumerate(pixels):
+                if sum(p[0:2]) / 3.0 < self.black_threshold:
+                    black_and_white_pixels[i % w + i / w * 384] = 0
+                else:
+                    black_and_white_pixels[i % w + i / w * 384] = 1
+        elif type(pixels[0]) in (list, tuple) and len(pixels[0]) == 4: # RGBA
+            print " => RGBA channel"
+            for i, p in enumerate(pixels):
+                if sum(p[0:2]) / 3.0 < self.black_threshold and p[3] > self.alpha_threshold:
+                    black_and_white_pixels[i % w + i / w * 384] = 0
+                else:
+                    black_and_white_pixels[i % w + i / w * 384] = 1
+        else:
+            print "Unsupported pixels array type. Please send plain list (single channel, RGB or RGBA)"
+            print "Type pixels[0]", type(pixels[0]), "haz", pixels[0]
+            return False
+
+        return black_and_white_pixels
+
+
+    def print_bitmap(self, pixels, w, h, output_png=False):
+        """ Best to use images that have a pixel width of 384 as this corresponds
+            to the printer row width. 
+            
+            pixels = a pixel array. RGBA, RGB, or one channel plain list of values (ranging from 0-255).
+            w = width of image
+            h = height of image
+            if "output_png" is set, prints an "print_bitmap_output.png" in the same folder using the same
+            thresholds as the actual printing commands. Useful for seeing if there are problems with the 
+            original image (this requires PIL).
+
+            Example code with PIL:
+                import Image, ImageDraw
+                i = Image.open("lammas_grayscale-bw.png")
+                data = list(i.getdata())
+                w, h = i.size
+                p.print_bitmap(data, w, h)
+        """
+        counter = 0
+        if output_png:
+            import Image, ImageDraw
+            test_img = Image.new('RGB', (384, h))
+            draw = ImageDraw.Draw(test_img)
+
+        self.linefeed()
+        
+        black_and_white_pixels = self.convert_pixel_array_to_binary(pixels, w, h)        
+        print_bytes = []
+
+        # read the bytes into an array
+        for rowStart in xrange(0, h, 256):
+            chunkHeight = 255 if (h - rowStart) > 255 else h - rowStart
+            print_bytes += (18, 42, chunkHeight, 48)
+            
+            for i in xrange(0, 48 * chunkHeight, 1):
+                # read one byte in
+                byt = 0
+                for xx in xrange(8):
+                    pixel_value = black_and_white_pixels[counter]
+                    counter += 1
+                    # check if this is black
+                    if pixel_value == 0:
+                        byt += 1 << (7 - xx)
+                        if output_png: draw.point((counter % 384, round(counter / 384)), fill=(0, 0, 0))
+                    # it's white
+                    else:
+                        if output_png: draw.point((counter % 384, round(counter / 384)), fill=(255, 255, 255))
+                
+                print_bytes.append(byt)
+        
+        # output the array all at once to the printer
+        # might be better to send while printing when dealing with 
+        # very large arrays...
+        for b in print_bytes:
+            self.printer.write(chr(b))   
+        
+        if output_png:
+            test_print = open('print-output.png', 'wb')
+            test_img.save(test_print, 'PNG')
+            print "output saved to %s" % test_print.name
+            test_print.close()           
+
 
 if __name__ == '__main__':
     import sys, os
@@ -215,3 +324,12 @@ if __name__ == '__main__':
     p.linefeed()
     p.linefeed()
     
+    # runtime dependency on Python Imaging Library
+    import Image, ImageDraw
+    i = Image.open("example-lammas.png")
+    data = list(i.getdata())
+    w, h = i.size
+    p.print_bitmap(data, w, h, True)
+    p.linefeed()
+    p.linefeed()
+    p.linefeed()
