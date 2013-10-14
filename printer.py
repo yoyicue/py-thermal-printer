@@ -88,6 +88,13 @@ class ThermalPrinter(object):
         self.printer.write(chr(heatTime)) # heatTime Library default = 255 (max)
         self.printer.write(chr(heatInterval)) # Heat interval (500 uS = slower, but darker) default = 250
 
+        #setting test
+        self.printer.write(chr(28)) # FS
+        self.printer.write(chr(38)) # &
+        self.printer.write(self._ESC) # ESC - command
+        self.printer.write(chr(82)) # R
+        self.printer.write(chr(15)) # chinese
+
         # Description of print density from page 23 of the manual:
         # DC2 # n Set printing density
         # Decimal: 18 35 n
